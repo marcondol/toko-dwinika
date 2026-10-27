@@ -525,9 +525,12 @@ def get_data_penjualan_detail():
 
 def get_data_pembelian():
     jwt = login()
-    url = 'https://api-dash.olsera.co.id/api/tokodwinika/admin/v1/id/openpurchase'
+    url = 'https://permissions-api-dash.olsera.co.id/api/tokodwinika/admin/v1/id/openpurchase'
     payload = { "per_page":100, "page": 1, "sort_column": "id", "sort_type": "desc" }
     df, meta = fetch_data_from_api(url, token=jwt, payload=payload)
+    if df is None or meta is None:
+        print("[pembelian] ❌ Failed to fetch first page, aborting.")
+        return
 
     from sqlalchemy import inspect
     if inspect(engine).has_table('purchase'):
@@ -554,6 +557,9 @@ def get_data_pembelian():
 
         payload['page'] += 1
         df, meta = fetch_data_from_api(url, token=jwt, payload=payload)
+        if df is None or meta is None:
+            print(f"[pembelian] ❌ Failed to fetch page {payload['page']}, stopping.")
+            break
         sleep_time = random.randint(2, 10)
         time.sleep(sleep_time)
 
@@ -592,8 +598,10 @@ def get_data_pembelian_detail():
 
     def process_row(purchase_id):
         try:
-            url = f'https://api-dash.olsera.co.id/api/tokodwinika/admin/v1/id/openpurchase/{purchase_id}'
+            url = f'https://permissions-api-dash.olsera.co.id/api/tokodwinika/admin/v1/id/openpurchase/{purchase_id}'
             df, meta = fetch_data_from_api(url, token=jwt, payload=None)
+            if df is None:
+                raise RuntimeError("API returned no data")
             df_item = pd.json_normalize(df['purchaseitems'][0])
 
             # Ensure you have a way to handle engine in a thread-safe manner
