@@ -7,7 +7,10 @@ import zipfile
 import os
 
 import os
-db_url = os.environ.get('DB_URL_TAX', os.environ.get('DB_URL', 'postgresql://dwinika:marcoganteng@localhost:5432/transaction_db'))
+from dotenv import load_dotenv
+load_dotenv()
+
+db_url = os.environ.get('DB_URL_TAX') or os.environ['DB_URL']
 
 # Database connection
 engine = create_engine(db_url)

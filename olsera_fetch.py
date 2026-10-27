@@ -7,7 +7,10 @@ import concurrent.futures
 import json
 
 import os
-db_url = os.environ.get('DB_URL', 'postgresql://comovie:comovie@localhost:5432/toko-dwinika')
+from dotenv import load_dotenv
+load_dotenv()
+
+db_url = os.environ['DB_URL']
 
 
 # Create the SQLAlchemy engine
@@ -86,11 +89,11 @@ def login():
 
     url = 'https://api-dash.olsera.co.id/oauth/token'
     payload = {
-        "client_id": 2,
-        "client_secret": "0XqbhEW6E72GNHn0iIM7Ui1GgB8jny91wYnXAIb8",
+        "client_id": int(os.environ['OLSERA_CLIENT_ID']),
+        "client_secret": os.environ['OLSERA_CLIENT_SECRET'],
         "grant_type": "password",
-        "username": "dwinika_dim@yahoo.com",
-        "password": "dwinika123!"
+        "username": os.environ['OLSERA_USERNAME'],
+        "password": os.environ['OLSERA_PASSWORD'],
     }
     headers = {
         'accept': 'application/json, text/plain, */*',
@@ -118,45 +121,6 @@ def login():
     else:
         print(response.text)
         return None
-
-
-#def login():
-#    url = 'https://api-dash.olsera.co.id/api/tokodwinika/admin/v1/id/login'
-
-#    url = 'https://api-dash.olsera.co.id/oauth/token'
-#    payload = {
-#        "client_id": 2,
-#        "client_secret": "0XqbhEW6E72GNHn0iIM7Ui1GgB8jny91wYnXAIb8",
-#        "grant_type": "password",
-#        "username": "dwinika_dim@yahoo.com",
-#        "password": "dwinika123!"
-#    }
-#    headers = {
-#        'accept': 'application/json, text/plain, */*',
-#        'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
-#        'content-type': 'application/json',
-#        'origin': 'https://dashboard.olsera.co.id',
-#        'referer': 'https://dashboard.olsera.co.id/',
-#        'sec-ch-ua': '"Not/A)Brand";v="99", "Chromium";v="99", "Google Chrome";v="99"',
-#        'sec-ch-ua-mobile': '?0',
-#        'sec-ch-ua-platform': '"Linux"',
-#        'sec-fetch-dest': 'empty',
-#        'sec-fetch-mode': 'cors',
-#        'sec-fetch-site': 'same-site',
-#        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-#    }
-
-#    response = requests.request("POST", url, headers=headers, json=payload)
-#    if response.status_code == 200:
-#        data = response.json()
-#        jwt = data['access_token']
-#        # Save the JWT to the database
-#        with engine.connect() as connection:
-#            connection.execute("INSERT INTO jwt_tokens (token) VALUES (%s)", (jwt,))
-#        return jwt
-#    else:
-#        print(response.text)
-#        return None
 
 #def fetch_data_from_api(url, token=None, payload=None):
 #    if token == None

@@ -3,8 +3,10 @@ services:
     build: .
     volumes:
       - .:/app
+    env_file:
+      - .env
     environment:
-      - DB_URL=postgresql://comovie:comovie@host.docker.internal:5432/toko-dwinika
+      - DB_URL=${DB_URL_DOCKER:-${DB_URL}}
     stdin_open: true
     tty: true
     command: sleep infinity
