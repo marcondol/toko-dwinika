@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - DB_URL=postgresql://comovie:comovie@host.docker.internal:5432/toko-dwinika
+    stdin_open: true
+    tty: true
+    command: sleep infinity
